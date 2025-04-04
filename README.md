@@ -7,9 +7,6 @@
   <img src="https://img.shields.io/badge/CrewAI-FF4545?style=for-the-badge&logo=robot&logoColor=white" alt="CrewAI">
 </div>
 
-<div align="center">
-  <p><i>An AI-powered research assistant that autonomously performs in-depth web research on any topic</i></p>
-</div>
 
 ---
 
