@@ -17,9 +17,7 @@
 
 Research Crew AI is a powerful, autonomous research system built with CrewAI that leverages multiple specialized AI agents to perform comprehensive web research on any topic of interest. The system orchestrates a team of AI agents, each with specific roles and responsibilities, to gather, process, and synthesize information from across the web into coherent, well-structured research reports.
 
-<div align="center">
-  <img src="https://via.placeholder.com/800x400.png?text=Research+Crew+AI+Flow" alt="Research Crew Flow" width="80%">
-</div>
+
 
 ## ✨ Features
 
