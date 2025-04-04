@@ -114,7 +114,7 @@ python gemini_research.py -c "Quantum computing applications in cryptography" --
 
 3. Install required packages:
    ```bash
-   pip install google-generativeai google-api-python-client newspaper3k python-dotenv beautifulsoup4 markdownify
+   pip install -r requirements.txt
    ```
 
 4. Set up your environment variables in `.env` file:
@@ -161,4 +161,4 @@ This project is open source and available under the MIT License.
 - [Google Gemini](https://ai.google.dev/gemini) - Google's advanced language models
 - [Google Custom Search](https://developers.google.com/custom-search) - Google's search API
 - [Newspaper3k](https://github.com/codelucas/newspaper) - Article scraping & curation
-- [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/) - Web scraping library 
+- [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/) - Web scraping library

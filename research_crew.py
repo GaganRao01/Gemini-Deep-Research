@@ -1,36 +1,25 @@
-# ... (all imports and class definitions remain the same as the previous version) ...
 import os
 import json
 import requests
 import argparse
 from typing import List, Dict, Any, Union, Optional, ClassVar, Type
-
-# Third-party imports
 from bs4 import BeautifulSoup
 from markdownify import markdownify
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from newspaper import Article
 from newspaper.article import ArticleException
-
-# CrewAI imports
 from crewai import Agent, Task, Crew, Process
 from crewai.tools import BaseTool
-
-# LangChain imports (CrewAI uses LangChain)
 from langchain_openai import ChatOpenAI
-
-# Local imports
 from google_search_schema import GoogleCustomSearchToolSchema
-
-# Load environment variables
 from dotenv import load_dotenv
 
-# --- Load Environment Variables ---
+
 load_dotenv()
 print(f"Dotenv loaded: OPENAI_API_KEY set: {bool(os.getenv('OPENAI_API_KEY'))}")
 
-# --- Define Custom Tools ---
+
 
 class GoogleCustomSearchTool(BaseTool):
     name: str = "Google Custom Search Tool"
@@ -41,7 +30,7 @@ class GoogleCustomSearchTool(BaseTool):
         "Returns a list of search result dictionaries (each with 'title', 'link', 'snippet') OR an error dictionary {'error': message}."
     )
     
-    # Use the schema from our imported module with proper annotation
+   
     schema_class: ClassVar[Type[GoogleCustomSearchToolSchema]] = GoogleCustomSearchToolSchema
 
     def _run(self, query: str, num_results: int = 3, site_search: Optional[str] = None) -> Union[List[Dict[str, Any]], Dict[str, str]]:
@@ -69,7 +58,6 @@ class GoogleCustomSearchTool(BaseTool):
         else:
             num = num_results
 
-        # Normalize site_search parameter - treat empty string as None
         if site_search == "":
             site_search = None
         elif site_search == "null":
@@ -191,7 +179,7 @@ class WebContentScraperTool(BaseTool):
             return {"content": cleaned_text}
 
         except requests.exceptions.Timeout:
-            error_msg = f"Scraping Error: Request timed out (>{headers.get('timeout', 25)}s) for {url}." # Referencing timeout correctly
+            error_msg = f"Scraping Error: Request timed out (>25s) for {url}."
             print(f"Error: {error_msg}")
             return {"error": error_msg}
         except requests.exceptions.TooManyRedirects:
@@ -212,7 +200,6 @@ class WebContentScraperTool(BaseTool):
             print(f"Error: {error_msg}\n{traceback.format_exc()}")
             return {"error": error_msg}
 
-# --- Main Execution Logic ---
 def main():
     parser = argparse.ArgumentParser(description="CrewAI Deep Research Agent")
     # Keep argparse definition for verbose as int for user input flexibility
@@ -267,13 +254,11 @@ def main():
         print(f"CRITICAL ERROR: Failed to initialize LLM. Check OpenAI API key and model name ('{args.model}'). Error: {e}")
         return
 
-search_tool = GoogleCustomSearchTool()
-scrape_tool = WebContentScraperTool()
+ 
+    search_tool = GoogleCustomSearchTool()
+    scrape_tool = WebContentScraperTool()
 
-# --- Define Agents ---
-    # Agent verbosity is often handled differently or less strictly,
-    # keeping args.verbose > 0 should be fine here.
-search_planner = Agent(
+    search_planner = Agent(
         role='Search Strategy Planner',
         goal=f"""Generate a list of {args.num_queries} diverse and effective Google search queries
              to research the topic: '{args.context}'.
@@ -281,21 +266,21 @@ search_planner = Agent(
              If a site restriction is provided ('{args.site}'), queries should ideally incorporate it using 'site:{args.site}' if relevant,
              but create general queries if the site restriction doesn't fit all aspects.
              Prioritize queries likely to find authoritative sources (news, research, .gov, .edu).""",
-    backstory=(
+        backstory=(
             "You are a master research strategist. You excel at dissecting complex topics into focused, "
             "high-yield search queries. You understand search operators and how to target specific types of information. "
             "Your final output MUST be *only* a Python list of query strings, nothing else."
         ),
         llm=llm,
-        verbose=(args.verbose > 0), # Convert int level to boolean for agent
-    allow_delegation=False,
-)
+        verbose=(args.verbose > 0),  
+        allow_delegation=False,
+    )
 
-researcher = Agent(
+    researcher = Agent(
         role='Information Synthesizer and Research Analyst',
         goal=f"""Execute a detailed research plan using provided search queries to gather, analyze,
              and synthesize information on: '{args.context}'. Produce a comprehensive report.""",
-    backstory=(
+        backstory=(
             "You are a highly skilled research analyst. You methodically execute search plans, critically evaluate sources, "
             "scrape web content, extract relevant insights, and synthesize findings into a coherent, well-structured report. "
             "You handle errors gracefully (e.g., skipping failed searches/scrapes) and focus relentlessly on the core research topic. "
@@ -303,12 +288,12 @@ researcher = Agent(
         ),
         llm=llm,
         tools=[search_tool, scrape_tool],
-        verbose=(args.verbose > 0), # Convert int level to boolean for agent
-    allow_delegation=False,
-)
+        verbose=(args.verbose > 0),  
+        allow_delegation=False,
+    )
 
-# --- Define Tasks ---
-plan_search_task = Task(
+    
+    plan_search_task = Task(
         description=f"""Analyze the research context: '{args.context}'.
                     Generate exactly {args.num_queries} distinct Google search query strings.
                     These queries should aim to uncover key information about the topic, including:
@@ -322,10 +307,10 @@ plan_search_task = Task(
                     Return *only* a Python list of these {args.num_queries} query strings, ready for use.
                     Example: ["define {args.context}", "recent advancements {args.context}", "{args.context} challenges", "{args.context} future trends"]""",
         expected_output=f"A Python list exactly containing {args.num_queries} search query strings.",
-    agent=search_planner,
-)
+        agent=search_planner,
+    )
 
-execute_research_task = Task(
+    execute_research_task = Task(
         description=f"""Execute the research plan based on the list of search queries provided by the Planner.
                     The overall research objective is to create a report on: '{args.context}'.
                     The site restriction requested (if any) is: '{args.site}'.
@@ -362,11 +347,11 @@ execute_research_task = Task(
                         The report must synthesize findings from the scraped web pages, be organized logically
                         (e.g., Intro, Applications, Challenges, Future, Conclusion), and cite source links.
                         If no relevant information was found, the output must clearly state this fact.""",
-    agent=researcher,
-    context=[plan_search_task],
-)
+        agent=researcher,
+        context=[plan_search_task],
+    )
 
-# --- Create and Run the Crew ---
+    
     research_crew = Crew(
         agents=[search_planner, researcher],
         tasks=[plan_search_task, execute_research_task],
@@ -377,17 +362,17 @@ execute_research_task = Task(
     print("\n--- Starting Research Crew ---")
     result = None
     try:
-    result = research_crew.kickoff()
-
-    print("\n--- Research Crew Finished ---")
-    print("Final Result:")
+        result = research_crew.kickoff()
+        
+        print("\n--- Research Crew Finished ---")
+        print("Final Result:")
         print("=============================")
         if isinstance(result, str): 
-    print(result)
+            print(result)
         else:
-            # Fix for JSON serialization error
+            
             try:
-                # Try to access the content directly
+                
                 if hasattr(result, 'raw'):
                     print(result.raw)
                 elif hasattr(result, 'last_task_output'):
@@ -411,4 +396,4 @@ execute_research_task = Task(
     return result
 
 if __name__ == "__main__":
-    main()
+    main() 
