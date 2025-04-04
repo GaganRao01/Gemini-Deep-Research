@@ -132,7 +132,7 @@ This repository includes a sample report on "Quantum Computing Applications in C
 - Dedicated sections on implementation challenges and limitations
 - Future research directions
 - Conclusion synthesizing the research
-- Properly formatted references
+- references
 
 You can view this report in the repository: [Sample Report: Quantum Computing Applications in Cryptography](research_report_Quantum_computing_applications.md)
 
