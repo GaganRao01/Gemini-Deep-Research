@@ -1,4 +1,3 @@
-# ... (all imports and class definitions remain the same as the previous version) ...
 import os
 import json
 import requests
@@ -191,7 +190,7 @@ class WebContentScraperTool(BaseTool):
             return {"content": cleaned_text}
 
         except requests.exceptions.Timeout:
-            error_msg = f"Scraping Error: Request timed out (>{headers.get('timeout', 25)}s) for {url}." # Referencing timeout correctly
+            error_msg = f"Scraping Error: Request timed out (>25s) for {url}."
             print(f"Error: {error_msg}")
             return {"error": error_msg}
         except requests.exceptions.TooManyRedirects:
@@ -267,13 +266,14 @@ def main():
         print(f"CRITICAL ERROR: Failed to initialize LLM. Check OpenAI API key and model name ('{args.model}'). Error: {e}")
         return
 
-search_tool = GoogleCustomSearchTool()
-scrape_tool = WebContentScraperTool()
+    # Create tools inside the main function (fix indentation issue)
+    search_tool = GoogleCustomSearchTool()
+    scrape_tool = WebContentScraperTool()
 
-# --- Define Agents ---
+    # --- Define Agents ---
     # Agent verbosity is often handled differently or less strictly,
     # keeping args.verbose > 0 should be fine here.
-search_planner = Agent(
+    search_planner = Agent(
         role='Search Strategy Planner',
         goal=f"""Generate a list of {args.num_queries} diverse and effective Google search queries
              to research the topic: '{args.context}'.
@@ -281,21 +281,21 @@ search_planner = Agent(
              If a site restriction is provided ('{args.site}'), queries should ideally incorporate it using 'site:{args.site}' if relevant,
              but create general queries if the site restriction doesn't fit all aspects.
              Prioritize queries likely to find authoritative sources (news, research, .gov, .edu).""",
-    backstory=(
+        backstory=(
             "You are a master research strategist. You excel at dissecting complex topics into focused, "
             "high-yield search queries. You understand search operators and how to target specific types of information. "
             "Your final output MUST be *only* a Python list of query strings, nothing else."
         ),
         llm=llm,
-        verbose=(args.verbose > 0), # Convert int level to boolean for agent
-    allow_delegation=False,
-)
+        verbose=(args.verbose > 0),  # Convert int level to boolean for agent
+        allow_delegation=False,
+    )
 
-researcher = Agent(
+    researcher = Agent(
         role='Information Synthesizer and Research Analyst',
         goal=f"""Execute a detailed research plan using provided search queries to gather, analyze,
              and synthesize information on: '{args.context}'. Produce a comprehensive report.""",
-    backstory=(
+        backstory=(
             "You are a highly skilled research analyst. You methodically execute search plans, critically evaluate sources, "
             "scrape web content, extract relevant insights, and synthesize findings into a coherent, well-structured report. "
             "You handle errors gracefully (e.g., skipping failed searches/scrapes) and focus relentlessly on the core research topic. "
@@ -303,12 +303,12 @@ researcher = Agent(
         ),
         llm=llm,
         tools=[search_tool, scrape_tool],
-        verbose=(args.verbose > 0), # Convert int level to boolean for agent
-    allow_delegation=False,
-)
+        verbose=(args.verbose > 0),  # Convert int level to boolean for agent
+        allow_delegation=False,
+    )
 
-# --- Define Tasks ---
-plan_search_task = Task(
+    # --- Define Tasks ---
+    plan_search_task = Task(
         description=f"""Analyze the research context: '{args.context}'.
                     Generate exactly {args.num_queries} distinct Google search query strings.
                     These queries should aim to uncover key information about the topic, including:
@@ -322,10 +322,10 @@ plan_search_task = Task(
                     Return *only* a Python list of these {args.num_queries} query strings, ready for use.
                     Example: ["define {args.context}", "recent advancements {args.context}", "{args.context} challenges", "{args.context} future trends"]""",
         expected_output=f"A Python list exactly containing {args.num_queries} search query strings.",
-    agent=search_planner,
-)
+        agent=search_planner,
+    )
 
-execute_research_task = Task(
+    execute_research_task = Task(
         description=f"""Execute the research plan based on the list of search queries provided by the Planner.
                     The overall research objective is to create a report on: '{args.context}'.
                     The site restriction requested (if any) is: '{args.site}'.
@@ -362,11 +362,11 @@ execute_research_task = Task(
                         The report must synthesize findings from the scraped web pages, be organized logically
                         (e.g., Intro, Applications, Challenges, Future, Conclusion), and cite source links.
                         If no relevant information was found, the output must clearly state this fact.""",
-    agent=researcher,
-    context=[plan_search_task],
-)
+        agent=researcher,
+        context=[plan_search_task],
+    )
 
-# --- Create and Run the Crew ---
+    # --- Create and Run the Crew ---
     research_crew = Crew(
         agents=[search_planner, researcher],
         tasks=[plan_search_task, execute_research_task],
@@ -377,13 +377,13 @@ execute_research_task = Task(
     print("\n--- Starting Research Crew ---")
     result = None
     try:
-    result = research_crew.kickoff()
-
-    print("\n--- Research Crew Finished ---")
-    print("Final Result:")
+        result = research_crew.kickoff()
+        
+        print("\n--- Research Crew Finished ---")
+        print("Final Result:")
         print("=============================")
         if isinstance(result, str): 
-    print(result)
+            print(result)
         else:
             # Fix for JSON serialization error
             try:
@@ -411,4 +411,4 @@ execute_research_task = Task(
     return result
 
 if __name__ == "__main__":
-    main()
+    main() 
