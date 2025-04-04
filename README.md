@@ -1,76 +1,164 @@
-# Research Crew - AI Research Tool
+# 🚀 Research Crew AI - Deep Research Platform
 
-This project uses CrewAI to set up a research team of AI agents that can perform web research on topics of interest.
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google Gemini">
+  <img src="https://img.shields.io/badge/Google_API-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google API">
+</div>
 
-## Issues Identified and Fixed
+<div align="center">
+  <p><i>An AI-powered research platform that performs comprehensive in-depth research with publication-quality reports using Google's Gemini</i></p>
+</div>
 
-1. **Import Error**: `BaseTool` was being imported from an incorrect path. 
-   - Fixed by updating import from `crewai.tools` instead of `crewai_tools.tools.base_tool`.
+---
 
-2. **Parameter Format Issue**: The `Crew` class parameter `verbose` was set to `2` instead of `True`.
-   - Fixed by changing the parameter to a boolean type.
+## 📖 Overview
 
-3. **Tool Input Handling**: The Google Custom Search and Web Scraper tools had issues parsing input.
-   - Fixed by enhancing input handling to accept different formats including JSON strings and dictionaries.
-   - Added better error handling and debugging output.
+Research Crew AI is a powerful, autonomous research system that leverages Google's Gemini LLM to generate comprehensive, detailed reports on any topic. The system performs extensive web research, producing thoroughly researched reports with proper citations, in-depth analysis, and academic rigor.
 
-4. **API Credentials**: The script was not properly checking for environment variables.
-   - Added explicit checks for required API keys.
-   - Improved error messages to guide the user on setting up these credentials.
+## ⚠️ Important Note
 
-5. **LangChain Integration**: Updated OpenAI import to use `langchain_openai` instead of the direct OpenAI package.
+**The recommended implementation is now `gemini_research.py`** - a simplified, direct integration with Google's Gemini API that runs independently without CrewAI. This provides better stability and performance.
 
-## Setup Instructions
+## 🔎 Project Files
 
-1. Copy the `.env.example` file to `.env` and fill in your API keys:
+| File | Purpose | Recommended |
+|------|---------|-------------|
+| **`gemini_research.py`** | **Simplified implementation using Google's Gemini API directly** | **✅ RECOMMENDED** |
+| `research_crew_deepresearch.py` | Enhanced implementation with CrewAI and Google Gemini (may encounter integration issues) | |
+| `research_crew.py` | Original implementation with CrewAI and OpenAI | |
+| `google_search_schema.py` | Defines the data structure for Google search parameters | |
+| `check_creds.py` | Tests if your API credentials work by performing a test Google search | |
+| `check_api_keys.py` | Checks if your API keys are present in the environment | |
+| `.env.example` | Template for creating your `.env` file with the required API keys | |
+
+## ✨ Features
+
+- 🧠 **Google Gemini Integration** - Uses Google's powerful Gemini 1.5 Pro LLM
+- 📊 **Configurable Research Depth** - Choose from 3 depth levels (basic, detailed, comprehensive)
+- 📈 **Customizable Search Scope** - Configure search queries and results per your needs
+- 📚 **Publication-Quality Reports** - Generate reports with proper academic structure
+- 🔗 **Proper Citations** - Enhanced in-text citations and formal bibliography
+- 📝 **Multiple Perspectives** - Present diverse viewpoints on the research topic
+- 💰 **Cost-Effective** - Uses Google Gemini models which may be more affordable than OpenAI alternatives
+- 🔄 **Sectional Report Generation** - Generates comprehensive reports by breaking down complex topics into manageable sections
+- 📅 **Up-to-Date Research** - Incorporates recency filters to ensure latest information is included
+
+## 🚀 Research Depth Levels
+
+| Level | Name | Description | Equivalent Length | Default Queries | Default Results per Query |
+|-------|------|-------------|-------------------|-----------------|---------------------------|
+| 1 | Basic | Concise but informative overview | 5-7 pages | 3 | 2 |
+| 2 | Detailed | Thorough analysis with significant depth | 10-15 pages | 5 | 3 |
+| 3 | Comprehensive | Exhaustive, publication-quality report | 20-30 pages | 8 | 4 |
+
+## 🛠️ Usage
+
+### Recommended: Using the Simplified Gemini Implementation
+
+```bash
+# Basic research
+python gemini_research.py -c "Future of renewable energy" --depth 1
+
+# Detailed research
+python gemini_research.py -c "Impact of artificial intelligence on education" --depth 2
+
+# Comprehensive research
+python gemini_research.py -c "Quantum computing applications in cryptography" --depth 3
+```
+
+### Command Line Arguments for gemini_research.py
+
+| Argument | Description | Default |
+|----------|-------------|---------|
+| `-c, --context` | The research topic (required) | N/A |
+| `--depth` | Research depth level (1=basic, 2=detailed, 3=comprehensive) | 1 |
+| `-q, --queries` | Number of search queries to generate (optional) | Based on depth |
+| `-r, --results` | Number of results per query (optional) | Based on depth |
+| `-s, --site` | Limit searches to a specific site (e.g., 'nature.com') | None |
+| `--verbose` | Verbosity level (0=minimal, 1=regular, 2=debug) | 1 |
+
+## 🔍 How It Works
+
+1. **Query Generation**: The system generates diverse search queries covering different aspects of your research topic
+2. **Web Search**: For each query, it searches the web using Google Custom Search API
+3. **Content Extraction**: For each search result, it scrapes the content and extracts relevant information
+4. **Report Synthesis**: All collected information is synthesized into a comprehensive report
+5. **Final Output**: The report is displayed and saved as a markdown file
+
+## 📧 Getting Started
+
+### Prerequisites
+
+- Python 3.8+
+- Google API key (for Gemini LLM)
+- Google Search API key
+- Google Custom Search Engine ID
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/GaganRao01/Research-Crew-AI-project.git
+   cd Research-Crew-AI-project
    ```
-   cp .env.example .env
+
+2. Set up a virtual environment:
+   ```bash
+   python -m venv venv
+   # On Windows
+   venv\Scripts\activate
+   # On macOS/Linux
+   source venv/bin/activate
    ```
 
-2. Edit the `.env` file and add your:
-   - OpenAI API key
-   - Google API key
-   - Google Custom Search Engine ID
-
-3. Install the required packages:
-   ```
-   pip install crewai google-api-python-client newspaper3k langchain-openai python-dotenv
+3. Install required packages:
+   ```bash
+   pip install google-generativeai google-api-python-client newspaper3k python-dotenv beautifulsoup4 markdownify
    ```
 
-4. Run the example research:
+4. Set up your environment variables in `.env` file:
    ```
-   python research_crew.py -c "Your research topic" -n 1 -r 3
+   GOOGLE_API_KEY=your_google_gemini_api_key_here
+   GOOGLE_SEARCH_API_KEY=your_google_search_api_key_here
+   GOOGLE_CSE_ID=your_custom_search_engine_id_here
    ```
 
-## Command Line Arguments
-
-- `-c, --context`: The research topic (required)
-- `-n, --num_iterations`: Number of research iterations (default: 1)
-- `-r, --num_results`: Maximum results per agent task (default: 3)
-- `--verbosity`: Set verbosity level (0=minimal, 1=detailed, 2=debug)
-- `--site`: Limit searches to a specific site (e.g., 'reddit.com')
-
-## Troubleshooting
-
-If you encounter issues with the Google Custom Search Tool or environment variables:
-
-1. Run the diagnostic script to check your credentials:
-   ```
+5. Verify your setup:
+   ```bash
+   python check_api_keys.py
    python check_creds.py
    ```
 
-2. Ensure the `.env` file is properly formatted and contains valid API keys.
+## 📋 Example Output
 
-3. Check that all required packages are installed.
+The research tool generates a comprehensive, well-structured report on the specified topic. The report includes:
 
-4. Look for detailed error messages in the console output.
+- Executive summary
+- Introduction to the topic
+- Multiple sections exploring different aspects of the topic
+- Analysis of key findings
+- Conclusions and recommendations (for depth levels 2 and 3)
+- References/sources with URLs
 
-## Tools Used
+### Sample Reports
 
-- **Google Custom Search Tool**: Searches Google and returns results.
-- **Web Content Scraper Tool**: Fetches and cleans content from URLs.
+The depth level 3 research mode can generate extensive, publication-quality reports like the example "Quantum Computing Applications in Cryptography" report (approximately 20,000 words) that covers:
 
-## Agents
+- Fundamentals of quantum computing
+- Quantum threats to classical cryptography
+- Post-quantum cryptography standardization
+- Quantum key distribution technologies
+- Implementation challenges
+- Future research directions
 
-- **Search Query Planner**: Generates optimal search queries for research.
-- **Information Researcher and Analyzer**: Finds, analyzes, and summarizes information. 
+## 📜 License
+
+This project is open source and available under the MIT License.
+
+## 🙏 Acknowledgements
+
+- [Google Gemini](https://ai.google.dev/gemini) - Google's advanced language models
+- [Google Custom Search](https://developers.google.com/custom-search) - Google's search API
+- [Newspaper3k](https://github.com/codelucas/newspaper) - Article scraping & curation
+- [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/) - Web scraping library 
