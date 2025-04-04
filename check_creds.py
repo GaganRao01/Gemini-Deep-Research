@@ -66,4 +66,4 @@ try:
 except HttpError as e:
     print(f"\nGoogle API HTTP error: {e}")
 except Exception as e:
-    print(f"\nUnexpected error: {e}") 
+    print(f"\nUnexpected error: {e}")
