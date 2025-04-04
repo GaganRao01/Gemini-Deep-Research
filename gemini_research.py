@@ -12,6 +12,7 @@ from newspaper import Article
 from newspaper.article import ArticleException
 import google.generativeai as genai
 from dotenv import load_dotenv
+import re
 
 # Load environment variables
 load_dotenv()
@@ -257,11 +258,11 @@ def generate_search_queries(research_topic: str, num_queries: int) -> List[str]:
     
     model = genai.GenerativeModel(
         model_name="gemini-1.5-pro",
-        generation_config={
-            "temperature": 0.7,
-            "top_p": 0.9,
-            "max_output_tokens": 2048
-        }
+        generation_config=genai.GenerationConfig(
+            temperature=0.7,
+            top_p=0.9,
+            max_output_tokens=2048
+        )
     )
     
     prompt = f"""Generate exactly {num_queries} diverse and specific search queries to thoroughly research the topic: '{research_topic}'.
@@ -515,33 +516,42 @@ def synthesize_report(research_topic: str, research_data: List[Dict[str, Any]], 
     # Initialize Gemini model with appropriate settings
     model = genai.GenerativeModel(
         model_name="gemini-1.5-pro",
-        generation_config={
-            "temperature": 0.2,  # Lower temperature for more factual output
-            "top_p": 0.95,
-            "max_output_tokens": 100000  # Set to maximum for comprehensive reports
-        }
+        generation_config=genai.GenerationConfig(
+            temperature=0.2,  # Lower temperature for more factual output
+            top_p=0.95,
+            max_output_tokens=100000  # Set to maximum for comprehensive reports
+        )
     )
     
     # For larger reports (depth 2-3), break it down into sections
     if depth >= 2:
         print(f"[Synthesizer] Breaking down depth {depth} report into {sections} sections")
         
-        # First, generate an outline
+        # First, generate an outline with standardized structure
         outline_prompt = f"""Create a detailed outline for a {report_length} research report on '{research_topic}'.
         
 Today's date is {current_date}.
 
-The research report should include exactly {sections} main sections (plus executive summary, introduction, and conclusion).
-Provide a detailed title for each section and 3-5 subsections under each main section.
+The research report MUST follow this exact structure:
+1. Executive Summary (concise overview of key findings)
+2. Introduction (context and importance of the topic)
+3-{sections}. Main Content Sections (each with relevant subsections)
+{sections+1}. Challenges and Limitations
+{sections+2}. Future Directions and Research Opportunities 
+{sections+3}. Conclusion
+{sections+4}. References
+
+For sections 3-{sections}, provide a detailed title for each main section and 2-4 subsections under each.
 The outline should be comprehensive and reflect the latest developments in this field.
 
 FORMAT YOUR RESPONSE AS:
-1. Title of section 1
-   1.1 Subsection title
-   1.2 Subsection title
-   1.3 Subsection title
-2. Title of section 2
-   ...and so on
+1. Executive Summary
+2. Introduction
+3. Title of first main section
+   3.1 Subsection title
+   3.2 Subsection title
+   3.3 Subsection title
+... and so on until the References section
 
 DO NOT include explanatory text, just the outline structure.
 """
@@ -549,26 +559,29 @@ DO NOT include explanatory text, just the outline structure.
         try:
             outline_response = model.generate_content(outline_prompt)
             outline = outline_response.text.strip()
-            print(f"[Synthesizer] Successfully generated report outline with {sections} main sections")
+            print(f"[Synthesizer] Successfully generated report outline with standardized structure")
             
             # Extract main sections from the outline
             import re
             main_sections = re.findall(r'^\d+\.\s+(.*?)$', outline, re.MULTILINE)
             
-            if len(main_sections) < 3:  # Fallback if section extraction fails
+            if len(main_sections) < 5:  # Fallback if section extraction fails
                 main_sections = [
+                    "Executive Summary",
+                    "Introduction",
                     "Background and Theoretical Foundations",
                     "Current Technologies and Implementations",
+                    "Analysis and Key Findings",
                     "Challenges and Limitations",
-                    "Future Directions and Implications",
-                    "Practical Applications and Case Studies"
+                    "Future Directions and Research Opportunities",
+                    "Conclusion",
+                    "References"
                 ]
                 if depth == 3:
-                    main_sections.extend([
-                        "Comparative Analysis and Benchmarks",
-                        "Regulatory and Compliance Considerations",
-                        "Ethical Implications"
-                    ])
+                    # Insert additional sections before challenges
+                    main_sections.insert(5, "Comparative Analysis and Benchmarks")
+                    main_sections.insert(6, "Regulatory and Compliance Considerations")
+                    main_sections.insert(7, "Ethical Implications")
             
             # Create executive summary and introduction
             intro_prompt = f"""Based on the research data provided, write the following parts of a research report on '{research_topic}':
@@ -580,30 +593,119 @@ Today's date is {current_date}. Include this date in the publication date.
 Research data:
 {context[:15000]}  # Limit context to avoid token limit
 
-FORMAT: Professional, academic style with appropriate headings.
+FORMAT: Professional, academic style with appropriate headings. DO NOT include citations in the executive summary.
 """
             
             intro_response = model.generate_content(intro_prompt)
             report_parts = [intro_response.text.strip()]
             
-            # Generate each section separately
-            for i, section_title in enumerate(main_sections[:sections]):
-                section_num = i + 1
+            # Track all references to consolidate at the end
+            all_references = []
+            references_section_index = -1
+            
+            # Generate each section separately (excluding executive summary, intro, conclusion, and references which are handled separately)
+            content_sections = [section for section in main_sections if section not in 
+                             ["Executive Summary", "Introduction", "Conclusion", "References", 
+                              "Challenges and Limitations", "Future Directions and Research Opportunities"]]
+            
+            # First generate all content sections
+            for i, section_title in enumerate(content_sections):
+                section_num = i + 3  # Starting from section 3 (after exec summary and intro)
                 section_prompt = f"""Write section {section_num}: "{section_title}" for a depth level {depth} research report on '{research_topic}'.
 
 This section should be approximately {2000 if depth == 2 else 3000} words and dive deep into this aspect of the topic.
-Include relevant subsections, use proper citations to sources, and provide detailed analysis.
+Include relevant subsections, include in-text citations but DO NOT include a references list at the end of this section.
 Ensure you incorporate the most recent developments (current date: {current_date}).
 
 Research data related to this section:
 {context[:20000]}  # Limit context to avoid token limit
 
 FORMAT: Professional academic style with clear subsection headings (e.g., "{section_num}.1", "{section_num}.2").
+Cite sources in-text as [Source Name, Year] or similar academic format.
+DO NOT include a references/sources list at the end of this section.
 """
                 
                 print(f"[Synthesizer] Generating section {section_num}: {section_title}")
                 section_response = model.generate_content(section_prompt)
-                report_parts.append(section_response.text.strip())
+                section_content = section_response.text.strip()
+                
+                # Extract references from the section to consolidate later
+                references_match = re.search(r'(?:References|Sources):\s*([\s\S]+?)(?=\n\n|$)', section_content, re.IGNORECASE)
+                if references_match:
+                    section_refs = references_match.group(1).strip()
+                    all_references.extend([ref.strip() for ref in section_refs.split('\n') if ref.strip()])
+                    # Remove references from the section as they'll be consolidated at the end
+                    section_content = re.sub(r'(?:References|Sources):\s*[\s\S]+?(?=\n\n|$)', '', section_content, flags=re.IGNORECASE)
+                
+                report_parts.append(section_content)
+            
+            # Now generate the standardized sections that should appear in a specific order
+            
+            # Generate Challenges and Limitations
+            challenges_prompt = f"""Write the "Challenges and Limitations" section for a depth level {depth} research report on '{research_topic}'.
+
+This section should:
+1. Identify and analyze current technical challenges in {research_topic}
+2. Discuss practical limitations of implementation
+3. Address gaps in current research
+4. Examine potential obstacles to widespread adoption
+
+Length: Approximately 1200-1800 words
+Include relevant subsections and in-text citations.
+
+Research data:
+{context[:15000]}  # Limit context to avoid token limit
+
+FORMAT: Professional academic style with appropriate subsections.
+Include in-text citations but DO NOT include a references list at the end of this section.
+"""
+            
+            print(f"[Synthesizer] Generating Challenges and Limitations section")
+            challenges_response = model.generate_content(challenges_prompt)
+            challenges_content = challenges_response.text.strip()
+            
+            # Extract any references from this section
+            references_match = re.search(r'(?:References|Sources):\s*([\s\S]+?)(?=\n\n|$)', challenges_content, re.IGNORECASE)
+            if references_match:
+                section_refs = references_match.group(1).strip()
+                all_references.extend([ref.strip() for ref in section_refs.split('\n') if ref.strip()])
+                # Remove references section from the content
+                challenges_content = re.sub(r'(?:References|Sources):\s*[\s\S]+?(?=\n\n|$)', '', challenges_content, flags=re.IGNORECASE)
+            
+            report_parts.append(challenges_content)
+            
+            # Generate Future Directions
+            future_prompt = f"""Write the "Future Directions and Research Opportunities" section for a depth level {depth} research report on '{research_topic}'.
+
+This section should:
+1. Identify emerging trends and future research directions
+2. Discuss potential technological advancements
+3. Analyze upcoming challenges and opportunities
+4. Propose specific areas that require further investigation
+
+Length: Approximately 1200-1800 words
+Include relevant subsections and in-text citations.
+
+Research data:
+{context[:15000]}  # Limit context to avoid token limit
+
+FORMAT: Professional academic style with appropriate subsections.
+Include in-text citations but DO NOT include a references list at the end of this section.
+"""
+            
+            print(f"[Synthesizer] Generating Future Directions section")
+            future_response = model.generate_content(future_prompt)
+            future_content = future_response.text.strip()
+            
+            # Extract any references from this section
+            references_match = re.search(r'(?:References|Sources):\s*([\s\S]+?)(?=\n\n|$)', future_content, re.IGNORECASE)
+            if references_match:
+                section_refs = references_match.group(1).strip()
+                all_references.extend([ref.strip() for ref in section_refs.split('\n') if ref.strip()])
+                # Remove references section from the content
+                future_content = re.sub(r'(?:References|Sources):\s*[\s\S]+?(?=\n\n|$)', '', future_content, flags=re.IGNORECASE)
+            
+            report_parts.append(future_content)
             
             # Generate conclusion
             conclusion_prompt = f"""Write the conclusion section for a depth level {depth} research report on '{research_topic}'.
@@ -612,10 +714,12 @@ The conclusion should:
 1. Summarize the key findings from all sections
 2. Synthesize insights into a coherent whole
 3. Discuss implications for the field
-4. Suggest directions for future research
+4. Suggest high-level directions for future research
 5. End with strong closing thoughts
 
 Length: Approximately 1000-1500 words
+DO NOT include a separate future directions section, as this has already been covered.
+DO NOT include references at the end of this section.
 
 Research data:
 {context[:10000]}  # Limit context to avoid token limit
@@ -623,15 +727,99 @@ Research data:
 FORMAT: Professional academic style.
 """
             
+            print(f"[Synthesizer] Generating conclusion section")
             conclusion_response = model.generate_content(conclusion_prompt)
-            report_parts.append(conclusion_response.text.strip())
+            conclusion_content = conclusion_response.text.strip()
+            
+            # Extract any references from the conclusion
+            references_match = re.search(r'(?:References|Sources):\s*([\s\S]+?)(?=\n\n|$)', conclusion_content, re.IGNORECASE)
+            if references_match:
+                section_refs = references_match.group(1).strip()
+                all_references.extend([ref.strip() for ref in section_refs.split('\n') if ref.strip()])
+                # Remove references from the conclusion
+                conclusion_content = re.sub(r'(?:References|Sources):\s*[\s\S]+?(?=\n\n|$)', '', conclusion_content, flags=re.IGNORECASE)
+            
+            report_parts.append(conclusion_content)
+            
+            # Deduplicate and format references
+            unique_references = []
+            for ref in all_references:
+                if ref and ref not in unique_references:
+                    unique_references.append(ref)
+            
+            # Generate consolidated references section
+            if unique_references:
+                references_section = "\n\n## References\n\n"
+                for ref in unique_references:
+                    references_section += f"{ref}\n\n"
+                report_parts.append(references_section)
+            else:
+                # Generate references if none were extracted
+                references_prompt = f"""Create a comprehensive references list for a research report on '{research_topic}'.
+
+Based on the sources mentioned in the report, compile a properly formatted academic references list.
+Include all sources that would have been cited in a report covering:
+1. Current state of the art in {research_topic}
+2. Key technologies and methodologies
+3. Challenges and limitations
+4. Future directions
+
+FORMAT: Academic style references list with proper formatting for different types of sources (journal articles, books, websites, etc.)
+Include approximately 15-20 high-quality, relevant references from reputable sources.
+"""
+                
+                print(f"[Synthesizer] Generating references section")
+                references_response = model.generate_content(references_prompt)
+                report_parts.append(references_response.text.strip())
             
             # Combine all parts
             full_report = "\n\n".join(report_parts)
             
             # Ensure the report includes the current date
             if current_date not in full_report[:1000]:  # Check first 1000 chars
-                full_report = f"## {research_topic}\n\n**Research Report**\n\n**Date: {current_date}**\n\n" + full_report
+                full_report = f"**Research Report: {research_topic}**\n\n**Publication Date:** {current_date}\n\n" + full_report
+            
+            # Clean up any remaining reference sections in the middle of the report
+            full_report = re.sub(r'(?:References|Sources):\s*[\s\S]+?(?=\n\n)', '', full_report, flags=re.IGNORECASE)
+            
+            # Standardize section numbering and formatting
+            formatted_lines = []
+            section_pattern = r'^#+\s*(.*?)$|^(\d+\..*?)$'  # Match markdown headings or numbered headings
+            
+            in_references = False
+            for line in full_report.split('\n'):
+                # Check if we're entering references section
+                if re.search(r'^#+\s*references', line, re.IGNORECASE):
+                    in_references = True
+                    formatted_lines.append('## References')
+                    continue
+                
+                # Leave references section intact
+                if in_references:
+                    formatted_lines.append(line)
+                    continue
+                
+                # Process section headings
+                section_match = re.search(section_pattern, line)
+                if section_match:
+                    heading = section_match.group(1) or section_match.group(2)
+                    # Remove numbering from the heading text
+                    clean_heading = re.sub(r'^\d+\.\d*\s*', '', heading)
+                    clean_heading = re.sub(r'^\d+\.\s*', '', clean_heading)
+                    
+                    # Check for subsection (contains a dot in the number or has ### format)
+                    if '.' in heading or line.startswith('###'):
+                        formatted_lines.append(f"### {clean_heading}")
+                    # Main section (just a number or ## format)
+                    elif re.match(r'^\d+\.?\s*', heading) or line.startswith('##'):
+                        formatted_lines.append(f"## {clean_heading}")
+                    else:
+                        formatted_lines.append(line)
+                else:
+                    formatted_lines.append(line)
+            
+            # Reassemble report with standardized formatting
+            full_report = '\n'.join(formatted_lines)
             
             word_count = len(full_report.split())
             print(f"[Synthesizer] Successfully generated comprehensive report ({len(full_report)} characters, ~{word_count} words)")
@@ -651,26 +839,27 @@ IMPORTANT: Today's date is {current_date}. Use this as the publication date of t
 For depth level {depth}, your report should be {report_length} with {report_detail}.
 YOU MUST generate a report of at least {min_words} words in length to meet the requirements for a depth level {depth} report.
 
-Your report must include:
-- Executive summary
-- Introduction to the topic area
-- Thorough exploration of all major dimensions of the topic
-- {"Basic analysis of key findings" if depth == 1 else "Detailed analysis with supporting evidence" if depth == 2 else "Comprehensive analysis with nuanced insights, theoretical underpinnings, and practical applications"}
-- Conclusion with key takeaways
-- {"" if depth == 1 else "Recommendations based on findings" if depth == 2 else "Extensive recommendations, future research directions, and implications"}
-- References/sources with URLs for all information presented
+Your report MUST follow this exact structure:
+1. Executive Summary (brief overview of key findings)
+2. Introduction (context and importance of the topic)
+3-{5 if depth == 1 else 8}. Main Content Sections (with subsections as needed)
+{6 if depth == 1 else 9}. Challenges and Limitations 
+{7 if depth == 1 else 10}. Future Directions (skip for depth 1)
+{8 if depth == 1 else 11}. Conclusion
+{9 if depth == 1 else 12}. References
 
 REQUIREMENTS:
 1. Use ONLY the most recent sources when discussing current developments
 2. Clearly indicate publication date at the top of your report ({current_date})
 3. Present multiple perspectives on controversial aspects of the topic
-4. Use proper academic citations throughout the text
+4. Use proper academic citations throughout the text (in-text citations)
 5. Organize the report with clear section headers and subheaders
 6. Include specific examples, case studies, and data points to support your analysis
 7. For a depth-{depth} report, you MUST write at least {min_words} words to be sufficiently comprehensive
+8. Place ALL references at the end in a dedicated References section
 
 FORMAT: Present your research as a professional, academic-style report with appropriate headings, subheadings, and formatting.
-Include URLs in proper citation format to credit your sources throughout the document.
+Include proper in-text citations throughout, with all sources consolidated in the final References section.
 
 Here is the research data to synthesize:
 
@@ -683,7 +872,50 @@ Here is the research data to synthesize:
         
         # Ensure the report includes the current date
         if current_date not in report[:1000]:  # Check first 1000 chars
-            report = f"## {research_topic}\n\n**Research Report**\n\n**Date: {current_date}**\n\n" + report
+            report = f"**Research Report: {research_topic}**\n\n**Publication Date:** {current_date}\n\n" + report
+        
+        # Clean up any scattered references sections
+        import re
+        report = re.sub(r'(?:References|Sources):\s*[\s\S]+?(?=\n\n##|\n\n#|\Z)', '', report, flags=re.IGNORECASE)
+        
+        # Standardize section numbering and formatting (same as in the sectional approach)
+        formatted_lines = []
+        section_pattern = r'^#+\s*(.*?)$|^(\d+\..*?)$'  # Match markdown headings or numbered headings
+        
+        in_references = False
+        for line in report.split('\n'):
+            # Check if we're entering references section
+            if re.search(r'^#+\s*references', line, re.IGNORECASE):
+                in_references = True
+                formatted_lines.append('## References')
+                continue
+            
+            # Leave references section intact
+            if in_references:
+                formatted_lines.append(line)
+                continue
+            
+            # Process section headings
+            section_match = re.search(section_pattern, line)
+            if section_match:
+                heading = section_match.group(1) or section_match.group(2)
+                # Remove numbering from the heading text
+                clean_heading = re.sub(r'^\d+\.\d*\s*', '', heading)
+                clean_heading = re.sub(r'^\d+\.\s*', '', clean_heading)
+                
+                # Check for subsection (contains a dot in the number or has ### format)
+                if '.' in heading or line.startswith('###'):
+                    formatted_lines.append(f"### {clean_heading}")
+                # Main section (just a number or ## format)
+                elif re.match(r'^\d+\.?\s*', heading) or line.startswith('##'):
+                    formatted_lines.append(f"## {clean_heading}")
+                else:
+                    formatted_lines.append(line)
+            else:
+                formatted_lines.append(line)
+        
+        # Reassemble report with standardized formatting
+        report = '\n'.join(formatted_lines)
         
         word_count = len(report.split())
         print(f"[Synthesizer] Successfully generated research report ({len(report)} characters, ~{word_count} words)")
