@@ -1,4 +1,4 @@
-# 🚀 Research Crew AI - Deep Research Platform
+# 🚀 Gemini Deep Research Platform
 
 <div align="center">
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
@@ -14,23 +14,19 @@
 
 ## 📖 Overview
 
-Research Crew AI is a powerful, autonomous research system that leverages Google's Gemini LLM to generate comprehensive, detailed reports on any topic. The system performs extensive web research, producing thoroughly researched reports with proper citations, in-depth analysis, and academic rigor.
-
-## ⚠️ Important Note
-
-**The recommended implementation is now `gemini_research.py`** - a simplified, direct integration with Google's Gemini API that runs independently without CrewAI. This provides better stability and performance.
+Gemini Deep Research is a powerful, autonomous research system that leverages Google's Gemini LLM to generate comprehensive, detailed reports on any topic. The system performs extensive web research, producing thoroughly researched reports with proper citations, in-depth analysis, and academic rigor.
 
 ## 🔎 Project Files
 
-| File | Purpose | Recommended |
-|------|---------|-------------|
-| **`gemini_research.py`** | **Simplified implementation using Google's Gemini API directly** | **✅ RECOMMENDED** |
-| `research_crew_deepresearch.py` | Enhanced implementation with CrewAI and Google Gemini (may encounter integration issues) | |
-| `research_crew.py` | Original implementation with CrewAI and OpenAI | |
-| `google_search_schema.py` | Defines the data structure for Google search parameters | |
-| `check_creds.py` | Tests if your API credentials work by performing a test Google search | |
-| `check_api_keys.py` | Checks if your API keys are present in the environment | |
-| `.env.example` | Template for creating your `.env` file with the required API keys | |
+| File | Purpose |
+|------|---------|
+| **`gemini_research.py`** | **Core implementation using Google's Gemini API for research** |
+| `check_gemini_key.py` | Tests if your Google Gemini API key is valid |
+| `check_api_keys.py` | Checks if your API keys are present in the environment |
+| `check_creds.py` | Tests if your API credentials work by performing a test Google search |
+| `google_search_schema.py` | Defines the data structure for Google search parameters |
+| `.env.example` | Template for creating your `.env` file with the required API keys |
+| `research_report_Quantum_computing_applications.md` | Sample generated report demonstrating the platform's capabilities |
 
 ## ✨ Features
 
@@ -109,6 +105,35 @@ The `gemini_research.py` script processes research in several key steps:
 
 The sectional approach ensures reports maintain a logical flow and professional structure regardless of topic complexity or research depth.
 
+## 📋 Example Output
+
+The research tool generates a comprehensive, well-structured report on the specified topic. The report includes:
+
+- Executive summary
+- Introduction to the topic
+- Multiple sections exploring different aspects of the topic
+- Analysis of key findings
+- Challenges and limitations
+- Future directions and research opportunities  
+- Conclusion
+- Consolidated references
+
+### Sample Report Included
+
+This repository includes a sample report on "Quantum Computing Applications in Cryptography" generated at depth level 3. This approximately 20,000-word report demonstrates the capabilities of the platform and follows the standardized structure:
+
+- Executive Summary and Introduction
+- Comprehensive sections on quantum computing fundamentals
+- Detailed analysis of quantum threats to classical cryptography
+- In-depth coverage of post-quantum cryptography standardization
+- Exploration of quantum key distribution technologies
+- Dedicated sections on implementation challenges and limitations
+- Future research directions
+- Conclusion synthesizing the research
+- Properly formatted references
+
+You can view this report in the repository: [Sample Report: Quantum Computing Applications in Cryptography](research_report_Quantum_computing_applications.md)
+
 ## 📧 Getting Started
 
 ### Prerequisites
@@ -122,8 +147,8 @@ The sectional approach ensures reports maintain a logical flow and professional 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/GaganRao01/Research-Crew-AI-project.git
-   cd Research-Crew-AI-project
+   git clone https://github.com/GaganRao01/Gemini-Deep-Research.git
+   cd Gemini-Deep-Research
    ```
 
 2. Set up a virtual environment:
@@ -152,28 +177,6 @@ The sectional approach ensures reports maintain a logical flow and professional 
    python check_api_keys.py
    python check_creds.py
    ```
-
-## 📋 Example Output
-
-The research tool generates a comprehensive, well-structured report on the specified topic. The report includes:
-
-- Executive summary
-- Introduction to the topic
-- Multiple sections exploring different aspects of the topic
-- Analysis of key findings
-- Conclusions and recommendations (for depth levels 2 and 3)
-- References/sources with URLs
-
-### Sample Reports
-
-The depth level 3 research mode can generate extensive, publication-quality reports like the example "Quantum Computing Applications in Cryptography" report (approximately 20,000 words) that covers:
-
-- Fundamentals of quantum computing
-- Quantum threats to classical cryptography
-- Post-quantum cryptography standardization
-- Quantum key distribution technologies
-- Implementation challenges
-- Future research directions
 
 ## 📜 License
 
