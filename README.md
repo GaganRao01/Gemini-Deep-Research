@@ -43,6 +43,9 @@ Research Crew AI is a powerful, autonomous research system that leverages Google
 - 💰 **Cost-Effective** - Uses Google Gemini models which may be more affordable than OpenAI alternatives
 - 🔄 **Sectional Report Generation** - Generates comprehensive reports by breaking down complex topics into manageable sections
 - 📅 **Up-to-Date Research** - Incorporates recency filters to ensure latest information is included
+- 📑 **Standardized Report Structure** - Ensures logical flow with consistent section organization (challenges, future directions, references)
+- 🎯 **Focused Content Sections** - Dedicated sections for challenges, limitations, and future directions
+- 📊 **Consolidated References** - All citations organized in a single, properly formatted reference section
 
 ## 🚀 Research Depth Levels
 
@@ -85,6 +88,26 @@ python gemini_research.py -c "Quantum computing applications in cryptography" --
 3. **Content Extraction**: For each search result, it scrapes the content and extracts relevant information
 4. **Report Synthesis**: All collected information is synthesized into a comprehensive report
 5. **Final Output**: The report is displayed and saved as a markdown file
+
+### How gemini_research.py Works
+
+The `gemini_research.py` script processes research in several key steps:
+
+1. **Search Query Generation**: Uses Google Gemini AI to create tailored search queries that cover different aspects of your research topic
+2. **Web Research**: Performs Google searches with the generated queries and collects results
+3. **Content Scraping**: Extracts relevant content from web pages using newspaper3k and BeautifulSoup
+4. **Date Extraction**: Analyzes content to identify and prioritize the most recent information
+5. **Sectional Report Creation**: Organizes research into a standardized structure:
+   - Executive Summary and Introduction
+   - Main Content Sections (tailored to the topic)
+   - Dedicated Challenges and Limitations section
+   - Future Directions section
+   - Conclusion
+   - Consolidated References section
+6. **Formatting Standardization**: Ensures consistent heading styles, section numbering, and citation format
+7. **Output Generation**: Produces a comprehensive markdown report with proper academic structure
+
+The sectional approach ensures reports maintain a logical flow and professional structure regardless of topic complexity or research depth.
 
 ## 📧 Getting Started
 
