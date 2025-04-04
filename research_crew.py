@@ -3,33 +3,23 @@ import json
 import requests
 import argparse
 from typing import List, Dict, Any, Union, Optional, ClassVar, Type
-
-# Third-party imports
 from bs4 import BeautifulSoup
 from markdownify import markdownify
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from newspaper import Article
 from newspaper.article import ArticleException
-
-# CrewAI imports
 from crewai import Agent, Task, Crew, Process
 from crewai.tools import BaseTool
-
-# LangChain imports (CrewAI uses LangChain)
 from langchain_openai import ChatOpenAI
-
-# Local imports
 from google_search_schema import GoogleCustomSearchToolSchema
-
-# Load environment variables
 from dotenv import load_dotenv
 
-# --- Load Environment Variables ---
+
 load_dotenv()
 print(f"Dotenv loaded: OPENAI_API_KEY set: {bool(os.getenv('OPENAI_API_KEY'))}")
 
-# --- Define Custom Tools ---
+
 
 class GoogleCustomSearchTool(BaseTool):
     name: str = "Google Custom Search Tool"
@@ -40,7 +30,7 @@ class GoogleCustomSearchTool(BaseTool):
         "Returns a list of search result dictionaries (each with 'title', 'link', 'snippet') OR an error dictionary {'error': message}."
     )
     
-    # Use the schema from our imported module with proper annotation
+   
     schema_class: ClassVar[Type[GoogleCustomSearchToolSchema]] = GoogleCustomSearchToolSchema
 
     def _run(self, query: str, num_results: int = 3, site_search: Optional[str] = None) -> Union[List[Dict[str, Any]], Dict[str, str]]:
@@ -68,7 +58,6 @@ class GoogleCustomSearchTool(BaseTool):
         else:
             num = num_results
 
-        # Normalize site_search parameter - treat empty string as None
         if site_search == "":
             site_search = None
         elif site_search == "null":
@@ -211,7 +200,6 @@ class WebContentScraperTool(BaseTool):
             print(f"Error: {error_msg}\n{traceback.format_exc()}")
             return {"error": error_msg}
 
-# --- Main Execution Logic ---
 def main():
     parser = argparse.ArgumentParser(description="CrewAI Deep Research Agent")
     # Keep argparse definition for verbose as int for user input flexibility
@@ -266,13 +254,10 @@ def main():
         print(f"CRITICAL ERROR: Failed to initialize LLM. Check OpenAI API key and model name ('{args.model}'). Error: {e}")
         return
 
-    # Create tools inside the main function (fix indentation issue)
+ 
     search_tool = GoogleCustomSearchTool()
     scrape_tool = WebContentScraperTool()
 
-    # --- Define Agents ---
-    # Agent verbosity is often handled differently or less strictly,
-    # keeping args.verbose > 0 should be fine here.
     search_planner = Agent(
         role='Search Strategy Planner',
         goal=f"""Generate a list of {args.num_queries} diverse and effective Google search queries
@@ -287,7 +272,7 @@ def main():
             "Your final output MUST be *only* a Python list of query strings, nothing else."
         ),
         llm=llm,
-        verbose=(args.verbose > 0),  # Convert int level to boolean for agent
+        verbose=(args.verbose > 0),  
         allow_delegation=False,
     )
 
@@ -303,11 +288,11 @@ def main():
         ),
         llm=llm,
         tools=[search_tool, scrape_tool],
-        verbose=(args.verbose > 0),  # Convert int level to boolean for agent
+        verbose=(args.verbose > 0),  
         allow_delegation=False,
     )
 
-    # --- Define Tasks ---
+    
     plan_search_task = Task(
         description=f"""Analyze the research context: '{args.context}'.
                     Generate exactly {args.num_queries} distinct Google search query strings.
@@ -366,7 +351,7 @@ def main():
         context=[plan_search_task],
     )
 
-    # --- Create and Run the Crew ---
+    
     research_crew = Crew(
         agents=[search_planner, researcher],
         tasks=[plan_search_task, execute_research_task],
@@ -385,9 +370,9 @@ def main():
         if isinstance(result, str): 
             print(result)
         else:
-            # Fix for JSON serialization error
+            
             try:
-                # Try to access the content directly
+                
                 if hasattr(result, 'raw'):
                     print(result.raw)
                 elif hasattr(result, 'last_task_output'):
