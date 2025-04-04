@@ -71,13 +71,8 @@ def google_search(query: str, num_results: int = 5, site_search: Optional[str] =
         }
         
         # If query contains date-related terms, request date sorting
-        # Note: 'sort' is not directly supported by Google CSE API, but we can add additional parameters
         if any(term in final_query.lower() for term in ['recent', 'latest', 'new', 'current', 'after:', '2023..', '2024..', 'last year']):
-            # We'll use dateRestrict parameter to focus on recent content
-            # Values can be: d[number] (past n days), w[number] (past n weeks), m[number] (past n months), y[number] (past n years)
-            search_params['dateRestrict'] = 'y1'  # Default to past 1 year
-            
-            # Check for more specific timeframes in query
+            search_params['dateRestrict'] = 'y1'
             if 'last week' in final_query.lower() or 'past week' in final_query.lower():
                 search_params['dateRestrict'] = 'w1'
             elif 'last month' in final_query.lower() or 'past month' in final_query.lower():
@@ -383,11 +378,11 @@ def execute_research(queries: List[str], results_per_query: int, site_restrictio
             })
             continue
         
-        # Try to detect date pattern in the content
+        # Trying to detect date pattern in the content
         def extract_date_from_content(content: str) -> Optional[str]:
             import re
             
-            # Look for common date patterns in the content
+            # Looking for common date patterns in the content
             # YYYY-MM-DD format
             date_pattern1 = re.compile(r'\b(20\d{2})[-/](0[1-9]|1[0-2])[-/](0[1-9]|[12][0-9]|3[01])\b')
             # Month DD, YYYY format
@@ -400,7 +395,7 @@ def execute_research(queries: List[str], results_per_query: int, site_restrictio
                 return date_match.group(0)
             return None
         
-        # Scrape content from each result
+        # Scraping content from each result
         scraped_content = []
         for result_idx, result in enumerate(search_results):
             url = result.get("link")
@@ -409,7 +404,7 @@ def execute_research(queries: List[str], results_per_query: int, site_restrictio
                 
             print(f"[Researcher] Processing search result {result_idx+1}/{len(search_results)}: {url}")
             
-            # Use the date from the search result if available
+            # Using the date from the search result if available
             date_from_search = result.get("date", "")
             
             # Attempt to scrape content
@@ -484,7 +479,7 @@ def synthesize_report(research_topic: str, research_data: List[Dict[str, Any]], 
             date = content_item.get("date", "Date not available")  # Include date when available
             error = content_item.get("error", "")
             
-            if content:  # Only add if content was successfully scraped
+            if content:  
                 source_count += 1
                 context += f"### Source {source_count}: {title}\n"
                 context += f"URL: {url}\n"

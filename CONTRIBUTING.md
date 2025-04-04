@@ -1,4 +1,4 @@
-# Contributing to Research Crew AI
+# Contributing to Research AI
 
 Thank you for your interest in contributing to the Research Crew AI project! This document provides guidelines and instructions for contributing to this project.
 
