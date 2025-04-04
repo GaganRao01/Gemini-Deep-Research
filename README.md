@@ -7,16 +7,15 @@
   <img src="https://img.shields.io/badge/CrewAI-FF4545?style=for-the-badge&logo=robot&logoColor=white" alt="CrewAI">
 </div>
 
+<div align="center">
+  <p><i>An AI-powered research assistant that autonomously performs in-depth web research on any topic</i></p>
+</div>
 
 ---
 
 ## 📖 Overview
 
 Research Crew AI is a powerful, autonomous research system built with CrewAI that leverages multiple specialized AI agents to perform comprehensive web research on any topic of interest. The system orchestrates a team of AI agents, each with specific roles and responsibilities, to gather, process, and synthesize information from across the web into coherent, well-structured research reports.
-
-<div align="center">
-  <img src="https://via.placeholder.com/800x400.png?text=Research+Crew+AI+Flow" alt="Research Crew Flow" width="80%">
-</div>
 
 ## 📁 Project Files
 
