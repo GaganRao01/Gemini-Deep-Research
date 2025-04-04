@@ -1,4 +1,3 @@
-
 import os
 print("API Key Check:")
 print(f"GOOGLE_API_KEY found: {'Yes' if os.getenv('GOOGLE_API_KEY') else 'No'}")
