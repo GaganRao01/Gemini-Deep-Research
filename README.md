@@ -105,6 +105,8 @@ The `gemini_research.py` script processes research in several key steps:
 
 The sectional approach ensures reports maintain a logical flow and professional structure regardless of topic complexity or research depth.
 
+> **Note**: Due to the current chunking and splitting approach used in report generation, some topics may be repeated across sections. We're aware of this limitation and plan to improve it in future updates.
+
 ## 📋 Example Output
 
 The research tool generates a comprehensive, well-structured report on the specified topic. The report includes:
