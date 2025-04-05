@@ -171,7 +171,7 @@ Use the commands in the Usage section. The output report is saved as a `.md` fil
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the `LICENSE` file.
+This project is licensed under the  `MIT License `.
 
 ---
 
