@@ -175,6 +175,21 @@ These issues arise from the independent nature of section-wise generation and li
 - Git
 - Google Gemini API Key (from AI Studio)
 - Google Custom Search API Key + CSE ID
+---
+## 🛠️ Configuration
+
+To run the Gemini Deep Research Platform, you’ll need the following keys:
+
+- **Google Gemini API Key** – for planning queries and generating content  
+- **Google Programmable Search Engine (CSE) API Key & Engine ID** – for web search  
+
+> 🔑 **Get Your Google Custom Search API Key & Engine ID**  
+Create your Programmable Search Engine here: [https://programmablesearchengine.google.com/controlpanel/all](https://programmablesearchengine.google.com/controlpanel/all)  
+You'll receive an **API key** and a **Search Engine ID (cx)**.  
+This gives you **10,000 search queries per day** for free.
+
+Store these values in your `.env` file or pass them into the script manually.
+
 
 ### Installation
 
@@ -209,7 +224,7 @@ Use the commands in the Usage section. The output report is saved as a `.md` fil
 ## 📜 License
 
 This project is licensed under the  `MIT License `.
-
+  
 ---
 
 ## 🙏 Acknowledgements
