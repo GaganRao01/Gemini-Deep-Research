@@ -55,13 +55,13 @@ Gemini Deep Research is a powerful, autonomous research system that leverages Go
 
 ```bash
 # Basic research
-python gemini_research.py "Future of renewable energy" --depth 1
+python gemini_research.py -c "Future of renewable energy" --depth 1
 
 # Detailed research
-python gemini_research.py "Impact of artificial intelligence on education" --depth 2
+python gemini_research.py -c "Impact of artificial intelligence on education" --depth 2
 
 # Comprehensive research
-python gemini_research.py "Quantum computing applications in cryptography" --depth 3
+python gemini_research.py -c  "Quantum computing applications in cryptography" --depth 3
 ```
 
 ### Command Line Arguments
