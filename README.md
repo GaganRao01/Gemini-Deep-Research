@@ -121,7 +121,7 @@ This repository includes sample reports generated at different depth levels. The
 - Google Search API key
 - Google Custom Search Engine ID
 
-### Get your Google Custom Search Engine and API here: 
+### Get your Google Custom Search Engine ID and API here: 
 
    - [Google Programmable Search Engine Control Panel](https://programmablesearchengine.google.com/controlpanel/all)
 
