@@ -26,7 +26,7 @@ Gemini Deep Research is a powerful, autonomous research system that leverages Go
 | `requirements.txt` | List of Python dependencies |
 | `CODE_DOCUMENTATION.md` | Detailed technical documentation for the codebase |
 | `CONTRIBUTING.md` | Guidelines for contributing to the project |
-| `research_report_*.md` | Sample generated reports demonstrating the platform's capabilities |
+| `research_report_Quantum_computing_applications.md` | Sample generated reports demonstrating the platform's capabilities |
 
 ## ✨ Features
 
@@ -121,33 +121,9 @@ This repository includes sample reports generated at different depth levels. The
 - Google Search API key
 - Google Custom Search Engine ID
 
-### Setting Up Google Custom Search Engine and API
+### Get your Google Custom Search Engine and API here: 
 
-1. **Create a Programmable Search Engine**:
-   - Go to [Google Programmable Search Engine Control Panel](https://programmablesearchengine.google.com/controlpanel/all)
-   - Click "Add" to create a new search engine
-   - Enter the sites you want to search (or select "Search the entire web" for comprehensive research)
-   - Name your search engine and click "Create"
-
-2. **Get Your Search Engine ID**:
-   - In the control panel, click on your newly created search engine
-   - Click "Setup" in the left sidebar
-   - Find your "Search engine ID" (This will be your `GOOGLE_CSE_ID`)
-
-3. **Create a Google Cloud Project for API Access**:
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project
-   - Navigate to "APIs & Services" > "Library"
-   - Search for "Custom Search API" and enable it
-   - Go to "APIs & Services" > "Credentials"
-   - Click "Create Credentials" > "API Key"
-   - Copy your API key (This will be your `GOOGLE_SEARCH_API_KEY`)
-
-4. **Set Up Gemini API Key**:
-   - Visit the [Google AI Studio](https://ai.google.dev/)
-   - Create or sign in to your account
-   - Go to "API keys" in the left sidebar
-   - Create a new API key or use an existing one (This will be your `GOOGLE_API_KEY`)
+   - [Google Programmable Search Engine Control Panel](https://programmablesearchengine.google.com/controlpanel/all)
 
 ### Installation
 
