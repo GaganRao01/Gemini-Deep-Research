@@ -43,6 +43,16 @@ Gemini Deep Research is a powerful, autonomous research system that leverages Go
 - 🎯 **Focused Content Sections** - Dedicated sections for challenges, limitations, and future directions
 - 📊 **Consolidated References** - All citations organized in a single, properly formatted reference section
 
+### Command Line Arguments
+
+| Argument | Description | Default |
+|----------|-------------|---------|
+| `topic` | The research topic (required) | N/A |
+| `--depth` | Research depth level (1=basic, 2=detailed, 3=comprehensive) | 1 |
+| `--queries` | Number of search queries to generate (optional) | Based on depth |
+| `--results` | Number of results per query (optional) | Based on depth |
+| `--site` | Limit searches to a specific site (e.g., 'nature.com') | None |
+| `--verbose` | Verbosity level (0=minimal, 1=regular, 2=debug) | 1 |
 ## 🚀 Research Depth Levels
 
 | Level | Name | Description | Equivalent Length | Default Queries | Default Results per Query |
@@ -64,16 +74,6 @@ python gemini_research.py -c "Impact of artificial intelligence on education" --
 python gemini_research.py -c  "Quantum computing applications in cryptography" --depth 3
 ```
 
-### Command Line Arguments
-
-| Argument | Description | Default |
-|----------|-------------|---------|
-| `topic` | The research topic (required) | N/A |
-| `--depth` | Research depth level (1=basic, 2=detailed, 3=comprehensive) | 1 |
-| `--queries` | Number of search queries to generate (optional) | Based on depth |
-| `--results` | Number of results per query (optional) | Based on depth |
-| `--site` | Limit searches to a specific site (e.g., 'nature.com') | None |
-| `--verbose` | Verbosity level (0=minimal, 1=regular, 2=debug) | 1 |
 
 ## 🔍 How It Works
 
