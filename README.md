@@ -7,7 +7,7 @@
 </div>
 
 <div align="center">
-  <p><i>An AI-powered research platform that performs comprehensive in-depth research with publication-quality reports using Google's Gemini</i></p>
+  <p><i>An AI-powered research platform that generates comprehensive reports using Google's Gemini</i></p>
 </div>
 
 ---
@@ -21,12 +21,12 @@ Gemini Deep Research is a powerful, autonomous research system that leverages Go
 | File | Purpose |
 |------|---------|
 | **`gemini_research.py`** | **Core implementation using Google's Gemini API for research** |
-| `check_gemini_key.py` | Tests if your Google Gemini API key is valid |
-| `check_api_keys.py` | Checks if your API keys are present in the environment |
-| `check_creds.py` | Tests if your API credentials work by performing a test Google search |
 | `google_search_schema.py` | Defines the data structure for Google search parameters |
 | `.env.example` | Template for creating your `.env` file with the required API keys |
-| `research_report_Quantum_computing_applications.md` | Sample generated report demonstrating the platform's capabilities |
+| `requirements.txt` | List of Python dependencies |
+| `CODE_DOCUMENTATION.md` | Detailed technical documentation for the codebase |
+| `CONTRIBUTING.md` | Guidelines for contributing to the project |
+| `research_report_*.md` | Sample generated reports demonstrating the platform's capabilities |
 
 ## ✨ Features
 
@@ -47,34 +47,32 @@ Gemini Deep Research is a powerful, autonomous research system that leverages Go
 
 | Level | Name | Description | Equivalent Length | Default Queries | Default Results per Query |
 |-------|------|-------------|-------------------|-----------------|---------------------------|
-| 1 | Basic | Concise but informative overview | 5-7 pages | 3 | 2 |
-| 2 | Detailed | Thorough analysis with significant depth | 10-15 pages | 5 | 3 |
-| 3 | Comprehensive | Exhaustive, publication-quality report | 20-30 pages | 8 | 4 |
+| 1 | Basic | Brief overview (~3000-5000 words) | 5-7 pages | 3 | 2 |
+| 2 | Detailed | Standard depth (~10,000-15,000 words) | 10-15 pages | 5 | 3 |
+| 3 | Comprehensive | Comprehensive deep dive (~25,000-30,000 words) | 20-30 pages | 8 | 4 |
 
 ## 🛠️ Usage
 
-### Recommended: Using the Simplified Gemini Implementation
-
 ```bash
 # Basic research
-python gemini_research.py -c "Future of renewable energy" --depth 1
+python gemini_research.py "Future of renewable energy" --depth 1
 
 # Detailed research
-python gemini_research.py -c "Impact of artificial intelligence on education" --depth 2
+python gemini_research.py "Impact of artificial intelligence on education" --depth 2
 
 # Comprehensive research
-python gemini_research.py -c "Quantum computing applications in cryptography" --depth 3
+python gemini_research.py "Quantum computing applications in cryptography" --depth 3
 ```
 
-### Command Line Arguments for gemini_research.py
+### Command Line Arguments
 
 | Argument | Description | Default |
 |----------|-------------|---------|
-| `-c, --context` | The research topic (required) | N/A |
+| `topic` | The research topic (required) | N/A |
 | `--depth` | Research depth level (1=basic, 2=detailed, 3=comprehensive) | 1 |
-| `-q, --queries` | Number of search queries to generate (optional) | Based on depth |
-| `-r, --results` | Number of results per query (optional) | Based on depth |
-| `-s, --site` | Limit searches to a specific site (e.g., 'nature.com') | None |
+| `--queries` | Number of search queries to generate (optional) | Based on depth |
+| `--results` | Number of results per query (optional) | Based on depth |
+| `--site` | Limit searches to a specific site (e.g., 'nature.com') | None |
 | `--verbose` | Verbosity level (0=minimal, 1=regular, 2=debug) | 1 |
 
 ## 🔍 How It Works
@@ -105,8 +103,6 @@ The `gemini_research.py` script processes research in several key steps:
 
 The sectional approach ensures reports maintain a logical flow and professional structure regardless of topic complexity or research depth.
 
-> **Note**: Due to the current chunking and splitting approach used in report generation, some topics may be repeated across sections. I'am aware of this limitation and plan to improve it in future updates.
-
 ## 📋 Example Output
 
 The research tool generates a comprehensive, well-structured report on the specified topic. The report includes:
@@ -122,28 +118,44 @@ The research tool generates a comprehensive, well-structured report on the speci
 
 ### Sample Report Included
 
-This repository includes a sample report on "Quantum Computing Applications in Cryptography" generated at depth level 3. This approximately 20,000-word report demonstrates the capabilities of the platform and follows the standardized structure:
-
-- Executive Summary and Introduction
-- Comprehensive sections on quantum computing fundamentals
-- Detailed analysis of quantum threats to classical cryptography
-- In-depth coverage of post-quantum cryptography standardization
-- Exploration of quantum key distribution technologies
-- Dedicated sections on implementation challenges and limitations
-- Future research directions
-- Conclusion synthesizing the research
-- references
-
-You can view this report in the repository: [Sample Report: Quantum Computing Applications in Cryptography](research_report_Quantum_computing_applications.md)
+This repository includes sample reports generated at different depth levels. These reports demonstrate the capabilities of the platform and follow the standardized structure. You can view these reports in the repository to see examples of the platform's output.
 
 ## 📧 Getting Started
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.9+
 - Google API key (for Gemini LLM)
 - Google Search API key
 - Google Custom Search Engine ID
+
+### Setting Up Google Custom Search Engine and API
+
+1. **Create a Programmable Search Engine**:
+   - Go to [Google Programmable Search Engine Control Panel](https://programmablesearchengine.google.com/controlpanel/all)
+   - Click "Add" to create a new search engine
+   - Enter the sites you want to search (or select "Search the entire web" for comprehensive research)
+   - Name your search engine and click "Create"
+
+2. **Get Your Search Engine ID**:
+   - In the control panel, click on your newly created search engine
+   - Click "Setup" in the left sidebar
+   - Find your "Search engine ID" (This will be your `GOOGLE_CSE_ID`)
+
+3. **Create a Google Cloud Project for API Access**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project
+   - Navigate to "APIs & Services" > "Library"
+   - Search for "Custom Search API" and enable it
+   - Go to "APIs & Services" > "Credentials"
+   - Click "Create Credentials" > "API Key"
+   - Copy your API key (This will be your `GOOGLE_SEARCH_API_KEY`)
+
+4. **Set Up Gemini API Key**:
+   - Visit the [Google AI Studio](https://ai.google.dev/)
+   - Create or sign in to your account
+   - Go to "API keys" in the left sidebar
+   - Create a new API key or use an existing one (This will be your `GOOGLE_API_KEY`)
 
 ### Installation
 
@@ -172,12 +184,6 @@ You can view this report in the repository: [Sample Report: Quantum Computing Ap
    GOOGLE_API_KEY=your_google_gemini_api_key_here
    GOOGLE_SEARCH_API_KEY=your_google_search_api_key_here
    GOOGLE_CSE_ID=your_custom_search_engine_id_here
-   ```
-
-5. Verify your setup:
-   ```bash
-   python check_api_keys.py
-   python check_creds.py
    ```
 
 ## 📜 License
