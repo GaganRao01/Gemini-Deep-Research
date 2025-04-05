@@ -54,6 +54,32 @@
 
 ---
 
+
+## 🔁 LLM Flexibility: Use Local Models Too!
+
+While this project is optimized for **Google Gemini 1.5 Pro**, you can also use **local LLMs** through tools like:
+
+- 🧠 **[Ollama](https://ollama.com)** — Easily run models like Mistral, LLaMA, or Qwen locally.
+- 🖥️ **[LM Studio](https://lmstudio.ai/)** — GUI-based local LLM runner with fast inference and API compatibility.
+
+> 💡 This allows you to experiment with fully offline generation or reduce API costs by using open-source models.
+
+To integrate a local LLM:
+- Swap Gemini API calls in `gemini_research.py` with calls to your local model's API (usually `http://localhost:11434` for Ollama).
+- Ensure your local model supports multi-turn chat and has enough context length for large inputs.
+
+Example usage (Ollama):
+
+```bash
+ollama run mistral
+# or serve via API
+ollama serve
+```
+
+Then modify the code to send generation prompts to your local endpoint.
+
+---
+
 ## ⚙️ Command Line Arguments
 
 | Argument           | Alias | Description                                                 | Default          |
