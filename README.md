@@ -126,7 +126,18 @@ python gemini_research.py -c "AI in agriculture" --depth 1 -q 2 -r 2 --verbose 1
 - **Conclusion**  
 - **References**
   
-📄 Sample Report: [research_report_Quantum_computing_applications.md](research_report_Quantum_computing_applications.md)
+#### 📄 Sample Report: [research_report_Quantum_computing_applications.md](research_report_Quantum_computing_applications.md)
+
+## 🛠️ Known Issues in Report Generation
+
+The current report generation process uses a sectional (chunk-based) approach implemented in the `synthesis_report()` function. While this enables modular generation, it also introduces some limitations:
+
+- Topics may be **repeated** across different sections.
+- **References are inconsistently placed**, often scattered throughout the document instead of being consolidated at the end.
+- Each section is generated **independently** with its own references, and the existing pattern matching logic for reference extraction doesn't consistently detect all formats.
+
+These issues arise from the independent nature of section-wise generation and limitations in post-processing.
+
 
 ---
 
