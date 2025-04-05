@@ -12,6 +12,11 @@
 
 ---
 
+> ⚠️ **Disclaimer**  
+> This is a personal project where I attempted to replicate Google's Gemini Deep Research workflow. While not a perfect reproduction and still a work in progress, it was a great hands-on learning experience exploring Gemini APIs, web scraping, and structured AI report generation. Contributions, suggestions, and improvements are always welcome!
+
+---
+
 ## 📖 Overview
 
 **Gemini Deep Research** is a powerful, autonomous research system that leverages Google's Gemini LLM to generate comprehensive, detailed reports on any topic. It performs deep web research and produces well-cited, structured, and academically rigorous reports.
