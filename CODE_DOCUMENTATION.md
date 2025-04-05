@@ -51,28 +51,28 @@ The Gemini Deep Research platform uses a sequential pipeline architecture with t
 These components work in sequence, with each stage's output feeding into the next stage of the pipeline.
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+┬─────────────────┬     ┬─────────────────┬     ┬─────────────────┬
 │                 │     │                 │     │                 │
 │  Query          │────▶│  Web Search     │────▶│  Content        │
 │  Generation     │     │  System         │     │  Scraping       │
 │                 │     │                 │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
+┴─────────────────┴     ┴─────────────────┴     ┴─────────────────┴
                                                         │
                                                         ▼
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+┬─────────────────┬     ┬─────────────────┬     ┬─────────────────┬
 │                 │     │                 │     │                 │
-│  Report         │◀────│  Sectional      │◀────│  Research Data  │
+│  Report         │◄────│  Sectional      │◄────│  Research Data  │
 │  Formatting     │     │  Report         │     │  Collection     │
 │                 │     │  Generation     │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
+┴─────────────────┴     ┴─────────────────┴     ┴─────────────────┴
         │
         ▼
-┌─────────────────┐
+┬─────────────────┬
 │                 │
 │  Markdown       │
 │  Output         │
 │                 │
-└─────────────────┘
+┴─────────────────┴
 ```
 
 ---
