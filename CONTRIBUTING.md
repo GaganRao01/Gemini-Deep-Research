@@ -1,6 +1,6 @@
-# Contributing to Research AI
+# Contributing to Gemini Deep Research
 
-Thank you for your interest in contributing to the Research Crew AI project! This document provides guidelines and instructions for contributing to this project.
+Thank you for your interest in contributing to the Gemini Deep Research project! This document provides guidelines and instructions for contributing to this project.
 
 ## Ways to Contribute
 
@@ -17,8 +17,8 @@ There are several ways you can contribute to this project:
 1. Fork the repository on GitHub.
 2. Clone your fork locally:
    ```bash
-   git clone https://github.com/your-username/Research-Crew-AI-project.git
-   cd Research-Crew-AI-project
+   git clone https://github.com/your-username/Gemini-Deep-Research.git
+   cd Gemini-Deep-Research
    ```
 3. Create a new branch for your work:
    ```bash
@@ -84,4 +84,4 @@ By contributing to this project, you agree that your contributions will be licen
 
 If you have any questions or need help, please open an issue on GitHub or contact the maintainers directly.
 
-Thank you for contributing to Research Crew AI!
+Thank you for contributing to Gemini Deep Research!
