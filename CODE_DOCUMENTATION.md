@@ -61,7 +61,7 @@ These components work in sequence, with each stage's output feeding into the nex
                                                         ▼
 ┬─────────────────┬     ┬─────────────────┬     ┬─────────────────┬
 │                 │     │                 │     │                 │
-│  Report         │◄────│  Sectional      │◄────│  Research Data  │
+│  Report         │◀────│  Sectional      │◀────│  Research Data  │
 │  Formatting     │     │  Report         │     │  Collection     │
 │                 │     │  Generation     │     │                 │
 ┴─────────────────┴     ┴─────────────────┴     ┴─────────────────┴
