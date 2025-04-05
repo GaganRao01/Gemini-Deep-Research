@@ -77,15 +77,7 @@ python gemini_research.py "Quantum computing applications in cryptography" --dep
 
 ## 🔍 How It Works
 
-1. **Query Generation**: The system generates diverse search queries covering different aspects of your research topic
-2. **Web Search**: For each query, it searches the web using Google Custom Search API
-3. **Content Extraction**: For each search result, it scrapes the content and extracts relevant information
-4. **Report Synthesis**: All collected information is synthesized into a comprehensive report
-5. **Final Output**: The report is displayed and saved as a markdown file
-
-### How gemini_research.py Works
-
-The `gemini_research.py` script processes research in several key steps:
+The script processes research in several key steps:
 
 1. **Search Query Generation**: Uses Google Gemini AI to create tailored search queries that cover different aspects of your research topic
 2. **Web Research**: Performs Google searches with the generated queries and collects results
